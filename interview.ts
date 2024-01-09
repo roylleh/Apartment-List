@@ -136,6 +136,7 @@ const question3 = () => {
     Brock: "Engineering",
   };
 
+  // Turn dict into array so we can easily shuffle
   let inputArray = makeArray(inputDict);
   inputArray = _.shuffle(inputArray);
 
@@ -151,20 +152,24 @@ const question3 = () => {
       if (name) {
         pair.push(name);
       } else {
+        // No more names left, delete name key
         delete dict[team];
       }
 
       if (pair.length === 2) {
+        // Found pair, put it on result, and clear temp var
         result.push(pair);
         pair = [];
       }
     }
 
     if (!Object.keys(dict).length) {
+      // Dict empty, break
       break;
     }
   }
 
+  // One last unused person, form duplicate pair
   if (pair.length) {
     const unusedName = pair[0];
     const unusedTeam = inputDict[unusedName];
