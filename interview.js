@@ -18,8 +18,29 @@ var makePairs = function (array) {
     }
     return result;
 };
+var makeDict = function (input) {
+    var dict = {};
+    for (var _i = 0, input_1 = input; _i < input_1.length; _i++) {
+        var pair = input_1[_i];
+        var key = pair[0];
+        var val = pair[1];
+        if (!(val in dict)) {
+            dict[val] = [];
+        }
+        dict[val].push(key);
+    }
+    return dict;
+};
+var makeArray = function (inputDict) {
+    var result = [];
+    for (var name_1 in inputDict) {
+        var team = inputDict[name_1];
+        result.push([name_1, team]);
+    }
+    return result;
+};
 var question1 = function () {
-    var names = [
+    var input = [
         "Ian",
         "Naomi",
         "Kyler",
@@ -32,14 +53,15 @@ var question1 = function () {
         "Baker",
         "Brock",
     ];
-    names = _.shuffle(names);
-    var result = makePairs(names);
+    input = _.shuffle(input);
+    var result = makePairs(input);
+    console.log("Random Pairs");
     console.log(result);
     console.log();
 };
 question1();
 var question2 = function () {
-    var names = [
+    var input = [
         ["Ian", "Starbucks"],
         ["Naomi", "Dutch Bros"],
         ["Kyler", "Starbucks"],
@@ -52,23 +74,13 @@ var question2 = function () {
         ["Baker", "Dunkin"],
         ["Brock", "Blue Bottle"],
     ];
-    names = _.shuffle(names);
-    // Group names by coffee shop
-    var dict = {};
-    for (var _i = 0, names_1 = names; _i < names_1.length; _i++) {
-        var pair = names_1[_i];
-        var name_1 = pair[0];
-        var shop = pair[1];
-        if (!(shop in dict)) {
-            dict[shop] = [];
-        }
-        dict[shop].push(name_1);
-    }
+    input = _.shuffle(input);
     var result = [];
     var unused = [];
+    var dict = makeDict(input);
     for (var shop in dict) {
-        var names_2 = dict[shop];
-        var temp_1 = makePairs(names_2);
+        var names = dict[shop];
+        var temp_1 = makePairs(names);
         var last = temp_1.slice(-1)[0];
         if (last.length === 1) {
             // Lone name, save for later
@@ -87,7 +99,64 @@ var question2 = function () {
     }
     var temp = makePairs(unused);
     result = result.concat(temp);
+    console.log("Random Pairs Similar Shops");
     console.log(result);
     console.log();
 };
 question2();
+var question3 = function () {
+    var inputDict = {
+        Ian: "Accounting",
+        Naomi: "Sales",
+        Kyler: "Engineering",
+        Gabby: "Sales",
+        Joe: "Sales",
+        Carole: "HR",
+        Kelsey: "HR",
+        Josh: "Sales",
+        Danielle: "Engineering",
+        Baker: "Exec",
+        Brock: "Engineering",
+    };
+    var inputArray = makeArray(inputDict);
+    inputArray = _.shuffle(inputArray);
+    var result = [];
+    var pair = [];
+    var dict = makeDict(inputArray);
+    while (true) {
+        for (var team in dict) {
+            var names = dict[team];
+            var name_2 = names.pop();
+            if (name_2) {
+                pair.push(name_2);
+            }
+            else {
+                delete dict[team];
+            }
+            if (pair.length === 2) {
+                result.push(pair);
+                pair = [];
+            }
+        }
+        if (!Object.keys(dict).length) {
+            break;
+        }
+    }
+    if (pair.length) {
+        var unusedName = pair[0];
+        var unusedTeam = inputDict[unusedName];
+        for (var name_3 in inputDict) {
+            if (unusedName !== name_3) {
+                var team = inputDict[name_3];
+                if (unusedTeam !== team) {
+                    result.push([unusedName, name_3]);
+                    break;
+                }
+            }
+        }
+    }
+    console.log("Random Pairs Dissimilar Teams");
+    console.log(result);
+    console.log();
+};
+question3();
